@@ -8,6 +8,7 @@
 
 #import "RecipeCollectionViewController.h"
 #import "RecipeCollectionHeaderView.h"
+#import "RecipeViewController.h"
 
 
 @implementation RecipeCollectionViewController
@@ -51,6 +52,11 @@
     return [recipeImages count];
 }
 
+- (void) collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"user selected an item in UICollectionView");
+
+}
+
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *identifier = @"Cell";
     
@@ -59,6 +65,7 @@
     UIImageView *recipeImageView =  (UIImageView *) [cell viewWithTag:100];
     recipeImageView.image = [UIImage imageNamed:[recipeImages[indexPath.section] objectAtIndex:indexPath.row]];
     cell.backgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame"]];
+    cell.selectedBackgroundView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"photo-frame-selected"]];
     
     return cell;
 }
@@ -85,6 +92,17 @@
     }
     
     return reusableview;
+}
+
+- (void) prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"showRecipePhoto"]) {
+        NSArray *indexPaths = [self.collectionView indexPathsForSelectedItems];
+        RecipeViewController *destViewController =
+        segue.destinationViewController;
+        NSIndexPath *indexPath = [indexPaths objectAtIndex:0];
+        destViewController.recipeImageName = [recipeImages[indexPath.section] objectAtIndex:indexPath.row];
+        [self.collectionView deselectItemAtIndexPath:indexPath animated:NO];
+    }
 }
 
 
